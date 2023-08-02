@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
-    private static int ID = 0;  // Unique for every user
+    private static int id = 0;  // Unique for every user
 
     /**
      * GET request handler
@@ -37,9 +37,9 @@ public class UserController {
     @PostMapping(value = "/users")
     public User createUser(@Valid @RequestBody User user) {
         userValidation(user);
-        user.setID(++ID);
-        users.put(ID, user);
-        return users.get(ID);
+        user.setId(++id);
+        users.put(id, user);
+        return users.get(id);
     }
 
     /**
@@ -51,9 +51,9 @@ public class UserController {
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User updatedUser) {
         userValidation(updatedUser);
-        if (users.containsKey(updatedUser.getID())) {
-            users.put(updatedUser.getID(), updatedUser);
-            return users.get(updatedUser.getID());
+        if (users.containsKey(updatedUser.getId())) {
+            users.put(updatedUser.getId(), updatedUser);
+            return users.get(updatedUser.getId());
         } else {
             log.warn("User update incorrect.");
             throw new ValidationException("No such user!");

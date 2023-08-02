@@ -33,7 +33,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUser() {
-        user.setID(1);
+        user.setId(1);
         user.setEmail("test@mail.com");
         user.setLogin("test");
         user.setName("test name");

@@ -33,7 +33,7 @@ class FilmControllerTest {
 
     @BeforeEach
     void setFilm() {
-        film.setID(1);
+        film.setId(1);
         film.setName("Name");
         film.setDescription("Test film.");
         film.setReleaseDate(LocalDate.of(2009, 5, 28));

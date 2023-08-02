@@ -19,7 +19,7 @@ import java.util.List;
 public class FilmController {
 
     private final HashMap<Integer, Film> films = new HashMap<>();
-    private static int ID = 0;  // Unique ID for every film
+    private static int id = 0;  // Unique ID for every film
 
     /**
      * GET request handler
@@ -40,9 +40,9 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
         filmValidation(film);
-        film.setID(++ID);
-        films.put(ID, film);
-        return films.get(ID);
+        film.setId(++id);
+        films.put(id, film);
+        return films.get(id);
     }
 
     /**
@@ -54,9 +54,9 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
         filmValidation(updatedFilm);
-        if (films.containsKey(updatedFilm.getID())) {
-            films.put(updatedFilm.getID(), updatedFilm);
-            return films.get(updatedFilm.getID());
+        if (films.containsKey(updatedFilm.getId())) {
+            films.put(updatedFilm.getId(), updatedFilm);
+            return films.get(updatedFilm.getId());
         } else {
             throw new ValidationException("No such film!");
         }
