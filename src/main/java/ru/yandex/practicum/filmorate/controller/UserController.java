@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -56,7 +57,7 @@ public class UserController {
             return users.get(updatedUser.getId());
         } else {
             log.warn("User update incorrect.");
-            throw new ValidationException("No such user!");
+            throw new ResourceNotFoundException("No such user!");
         }
     }
 
@@ -72,7 +73,7 @@ public class UserController {
             throw new ValidationException("Login must be without spaces!");
         }
 
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
     }
