@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.util.Util.userValidation;
+
 /**
  * Class controller for users
  */
@@ -16,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
-    private static int id = 0;  // Unique for every user
+    private static int id = 0;  // Unique ID for every user
 
     /**
      * GET request handler
@@ -57,23 +59,6 @@ public class UserController {
         } else {
             log.warn("User update incorrect.");
             throw new ResourceNotFoundException("No such user!");
-        }
-    }
-
-    /**
-     * Validation for user's login and empty name
-     * Throws custom exception
-     *
-     * @param user to validate
-     */
-    private void userValidation(User user) {
-        if (user.getLogin().matches(".*\\s+.*")) {
-            log.warn("Login validation incorrect.");
-            throw new ValidationException("Login must be without spaces!");
-        }
-
-        if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
         }
     }
 }

@@ -5,10 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
 
 
 /**
@@ -58,26 +59,10 @@ public class FilmController {
             films.put(updatedFilm.getId(), updatedFilm);
             return films.get(updatedFilm.getId());
         } else {
-            throw new ValidationException("No such film!");
+            log.warn("Film update incorrect.");
+            throw new ResourceNotFoundException("No such film!");
         }
     }
 
-    /**
-     * Validation for film's description and release date
-     * Throws custom exceptions
-     *
-     * @param film to validate
-     */
-    private void filmValidation(Film film) {
-        if (film.getDescription().length() > 200) {
-            log.warn("Film's description too long.");
-            throw new ValidationException("Description must be less than 200 symbols!");
-        }
 
-        LocalDate cinemaBDay = LocalDate.of(1895, 12, 28);
-        if (!film.getReleaseDate().isAfter(cinemaBDay)) {
-            log.warn("Film's release date too old.");
-            throw new ValidationException("Release date must be after 1895-12-28");
-        }
-    }
 }
