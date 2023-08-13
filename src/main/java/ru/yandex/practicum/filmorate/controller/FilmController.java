@@ -3,10 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
@@ -19,8 +19,7 @@ import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
 @Slf4j
 public class FilmController {
 
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private static int id = 0;  // Unique ID for every film
+    private static final FilmStorage filmStorage = new InMemoryFilmStorage();
 
     /**
      * GET request handler
@@ -29,7 +28,7 @@ public class FilmController {
      */
     @GetMapping("/films")
     public List<Film> getAllFilms() {
-        return new ArrayList<>(films.values());
+        return filmStorage.getFilms();
     }
 
     /**
@@ -41,9 +40,7 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
         filmValidation(film);
-        film.setId(++id);
-        films.put(id, film);
-        return films.get(id);
+        return filmStorage.addFilm(film);
     }
 
     /**
@@ -55,13 +52,7 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
         filmValidation(updatedFilm);
-        if (films.containsKey(updatedFilm.getId())) {
-            films.put(updatedFilm.getId(), updatedFilm);
-            return films.get(updatedFilm.getId());
-        } else {
-            log.warn("Film update incorrect.");
-            throw new ResourceNotFoundException("No such film!");
-        }
+        return filmStorage.updateFilm(updatedFilm);
     }
 
 

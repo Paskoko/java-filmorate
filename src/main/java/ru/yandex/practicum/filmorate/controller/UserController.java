@@ -1,15 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import static ru.yandex.practicum.filmorate.util.Util.userValidation;
 
 /**
  * Class controller for users
@@ -17,8 +16,13 @@ import static ru.yandex.practicum.filmorate.util.Util.userValidation;
 @RestController
 @Slf4j
 public class UserController {
-    private final HashMap<Integer, User> users = new HashMap<>();
-    private static int id = 0;  // Unique ID for every user
+
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * GET request handler
@@ -27,7 +31,7 @@ public class UserController {
      */
     @GetMapping("/users")
     public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
+        return userService.getUsers();
     }
 
     /**
@@ -38,10 +42,18 @@ public class UserController {
      */
     @PostMapping(value = "/users")
     public User createUser(@Valid @RequestBody User user) {
-        userValidation(user);
-        user.setId(++id);
-        users.put(id, user);
-        return users.get(id);
+        return userService.createUser(user);
+    }
+
+    /**
+     * GET user by id request handler
+     *
+     * @param id of user
+     * @return user
+     */
+    @GetMapping(value = "/users/{id}")
+    public User getUserById(@PathVariable int id) {
+        return userService.getUserById(id);
     }
 
     /**
@@ -52,13 +64,56 @@ public class UserController {
      */
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User updatedUser) {
-        userValidation(updatedUser);
-        if (users.containsKey(updatedUser.getId())) {
-            users.put(updatedUser.getId(), updatedUser);
-            return users.get(updatedUser.getId());
-        } else {
-            log.warn("User update incorrect.");
-            throw new ResourceNotFoundException("No such user!");
-        }
+        return userService.updateUser(updatedUser);
+    }
+
+    /**
+     * PUT request handler
+     * Add friend for user
+     *
+     * @param id       of user
+     * @param friendId to add
+     * @return user with new friend
+     */
+    @PutMapping(value = "/users/{id}/friends/{friendId}")
+    public User addNewFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.addNewFriend(id, friendId);
+    }
+
+    /**
+     * DELETE request handler
+     * Delete user's friend
+     *
+     * @param id       of user
+     * @param friendId to delete
+     * @return user without friend
+     */
+    @DeleteMapping(value = "users/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    /**
+     * GET user's friend list request handler
+     *
+     * @param id of user
+     * @return friends list
+     */
+    @GetMapping(value = "users/{id}/friends")
+    public List<User> getUsersFriends(@PathVariable int id) {
+        return userService.getUsersFriends(id);
+    }
+
+    /**
+     * GET request handler
+     * List with common friends
+     *
+     * @param id      of user
+     * @param otherId of other user
+     * @return list with common friends
+     */
+    @GetMapping(value = "users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }
