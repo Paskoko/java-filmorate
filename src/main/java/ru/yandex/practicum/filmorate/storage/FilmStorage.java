@@ -32,4 +32,12 @@ public interface FilmStorage {
      */
     List<Film> getFilms();
 
+    /**
+     * Return film by id
+     *
+     * @param id of film
+     * @return film
+     */
+    Film getFilmById(int id);
+
 }

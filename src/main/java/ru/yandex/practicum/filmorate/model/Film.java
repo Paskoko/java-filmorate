@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Class with film's components
@@ -21,4 +22,5 @@ public class Film {
     @Positive
     private int duration;
     private int rate;
+    private Set<Integer> likes;
 }

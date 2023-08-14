@@ -60,5 +60,19 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-
+    /**
+     * Return film by id
+     *
+     * @param id of film
+     * @return film
+     */
+    @Override
+    public Film getFilmById(int id) {
+        if (films.containsKey(id)) {
+            return films.get(id);
+        } else {
+            log.warn("Incorrect id.");
+            throw new ResourceNotFoundException("No such film with that id!");
+        }
+    }
 }
