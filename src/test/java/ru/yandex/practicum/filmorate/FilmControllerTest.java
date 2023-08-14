@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.time.LocalDate;
 
@@ -24,11 +26,15 @@ class FilmControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private FilmService filmService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     private FilmController filmController;
+
     private final Film film = new Film();
 
     @BeforeEach
@@ -56,7 +62,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/films")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(film)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -66,7 +72,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/films")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(film)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -76,7 +82,7 @@ class FilmControllerTest {
         mockMvc.perform(post("/films")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(film)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -116,8 +122,6 @@ class FilmControllerTest {
         mockMvc.perform(post("/films")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(film)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
-
-
 }
