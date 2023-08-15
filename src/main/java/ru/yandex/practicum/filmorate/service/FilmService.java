@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
-
 @Service
 public class FilmService {
 
@@ -43,7 +41,6 @@ public class FilmService {
      * @return added film
      */
     public Film addFilm(Film film) {
-        filmValidation(film);
         return filmStorage.addFilm(film);
     }
 
@@ -54,7 +51,6 @@ public class FilmService {
      * @return updated film
      */
     public Film updateFilm(Film film) {
-        filmValidation(film);
         return filmStorage.updateFilm(film);
     }
 

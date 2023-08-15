@@ -71,7 +71,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (films.containsKey(id)) {
             return films.get(id);
         } else {
-            log.warn("Incorrect id.");
+            log.warn("Incorrect id of film: " + id);
             throw new ResourceNotFoundException("No such film with that id!");
         }
     }

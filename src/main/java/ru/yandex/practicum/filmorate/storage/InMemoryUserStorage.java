@@ -72,7 +72,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             return users.get(id);
         } else {
-            log.warn("Incorrect id.");
+            log.warn("Incorrect id of user: " + id);
             throw new ResourceNotFoundException("No such user with that id!");
         }
     }

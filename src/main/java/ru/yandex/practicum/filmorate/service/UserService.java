@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.util.Util.userValidation;
-
 /**
  * Class service for operations with users storage
  */
@@ -42,7 +40,6 @@ public class UserService {
      * @return added user
      */
     public User createUser(User user) {
-        userValidation(user);
         return userStorage.addUser(user);
     }
 
@@ -53,7 +50,6 @@ public class UserService {
      * @return updated user
      */
     public User updateUser(User user) {
-        userValidation(user);
         return userStorage.updateUser(user);
     }
 

@@ -65,6 +65,7 @@ public class UserController {
      */
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User updatedUser) {
+        userValidation(updatedUser);   // For UserControllerTest
         return userService.updateUser(updatedUser);
     }
 
