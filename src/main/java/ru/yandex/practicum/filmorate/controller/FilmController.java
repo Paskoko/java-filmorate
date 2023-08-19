@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
@@ -16,11 +15,14 @@ import static ru.yandex.practicum.filmorate.util.Util.filmValidation;
  * Class controller for films
  */
 @RestController
-@Slf4j
 public class FilmController {
 
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private static int id = 0;  // Unique ID for every film
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     /**
      * GET request handler
@@ -29,7 +31,7 @@ public class FilmController {
      */
     @GetMapping("/films")
     public List<Film> getAllFilms() {
-        return new ArrayList<>(films.values());
+        return filmService.getFilms();
     }
 
     /**
@@ -40,10 +42,8 @@ public class FilmController {
      */
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
-        filmValidation(film);
-        film.setId(++id);
-        films.put(id, film);
-        return films.get(id);
+        filmValidation(film);   // For FilmControllerTest
+        return filmService.addFilm(film);
     }
 
     /**
@@ -55,14 +55,56 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
         filmValidation(updatedFilm);
-        if (films.containsKey(updatedFilm.getId())) {
-            films.put(updatedFilm.getId(), updatedFilm);
-            return films.get(updatedFilm.getId());
-        } else {
-            log.warn("Film update incorrect.");
-            throw new ResourceNotFoundException("No such film!");
-        }
+        return filmService.updateFilm(updatedFilm);
     }
 
+    /**
+     * GET film by id request handler
+     *
+     * @param id of film
+     * @return film
+     */
+    @GetMapping(value = "/films/{id}")
+    public Film getFilmById(@PathVariable int id) {
+        return filmService.getFilmById(id);
+    }
+
+    /**
+     * PUT request handler
+     * Like the film
+     *
+     * @param id     of the film
+     * @param userId of user
+     * @return film with like
+     */
+    @PutMapping(value = "/films/{id}/like/{userId}")
+    public Film likeFilm(@PathVariable int id, @PathVariable int userId) {
+        return filmService.likeFilm(id, userId);
+    }
+
+    /**
+     * DELETE request handler
+     * Delete like from user
+     *
+     * @param id     of the film
+     * @param userId of user
+     * @return film without like
+     */
+    @DeleteMapping(value = "/films/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable int id, @PathVariable int userId) {
+        return filmService.deleteLike(id, userId);
+    }
+
+    /**
+     * GET request handler
+     * Get list of popular films
+     *
+     * @param count of popular films, by default 10
+     * @return list of popular films
+     */
+    @GetMapping(value = "/films/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopular(count);
+    }
 
 }
