@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import java.util.Set;
  * Class with film's components
  */
 @Data
+@Builder
 public class Film {
     private int id;
     @NotBlank
@@ -22,5 +24,6 @@ public class Film {
     @Positive
     private int duration;
     private int rate;
-    private Set<Integer> likes;
+    private MpaRating mpa;
+    private Set<Genre> genres;  // Set to check duplicates
 }

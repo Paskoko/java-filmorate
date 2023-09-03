@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -105,6 +107,53 @@ public class FilmController {
     @GetMapping(value = "/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopular(count);
+    }
+
+    /**
+     * GET request handler
+     * Get list with all MPA ratings
+     *
+     * @return list of all MPA ratings
+     */
+    @GetMapping(value = "/mpa")
+    public List<MpaRating> getAllMpa() {
+        return filmService.getAllMpa();
+    }
+
+    /**
+     * GET request handler
+     * Get MPA rating by id
+     *
+     * @param id of MPA rating
+     * @return MPA rating
+     */
+    @GetMapping(value = "/mpa/{id}")
+    public MpaRating getMpaRatingById(@PathVariable int id) {
+        return filmService.getMpaRatingById(id);
+    }
+
+
+    /**
+     * GET request handler
+     * Get list with all genres
+     *
+     * @return list with all genres
+     */
+    @GetMapping(value = "/genres")
+    public List<Genre> getAllGenres() {
+        return filmService.getAllGenres();
+    }
+
+    /**
+     * GET request handler
+     * Get genre by id
+     *
+     * @param id of genre
+     * @return genre
+     */
+    @GetMapping(value = "/genres/{id}")
+    public Genre getGenreById(@PathVariable int id) {
+        return filmService.getGenreById(id);
     }
 
 }
