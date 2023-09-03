@@ -34,7 +34,7 @@ class UserControllerTest {
 
     @Autowired
     private UserController userController;
-    private final User user = new User();
+    private final User user = User.builder().build();
 
     @BeforeEach
     void setUser() {
