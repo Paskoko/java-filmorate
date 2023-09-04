@@ -4,19 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.storage.database.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.database.LikesDbStorage;
-import ru.yandex.practicum.filmorate.storage.database.MpaDbStorage;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Class service for operations with films storage
+ */
 @Service
 public class FilmService {
 
@@ -26,19 +25,12 @@ public class FilmService {
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
-    private final MpaDbStorage mpaDbStorage;
-
-    private final GenreDbStorage genreDbStorage;
-
     private final LikesDbStorage likesDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, MpaDbStorage mpaDbStorage,
-                       GenreDbStorage genreDbStorage, LikesDbStorage likesDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikesDbStorage likesDbStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.mpaDbStorage = mpaDbStorage;
-        this.genreDbStorage = genreDbStorage;
         this.likesDbStorage = likesDbStorage;
     }
 
@@ -135,46 +127,6 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Get list of all MPA ratings
-     *
-     * @return list of MPA ratings
-     */
-    public List<MpaRating> getAllMpa() {
-        return mpaDbStorage.getAllMpaRatings();
-    }
-
-    /**
-     * Get MPA rating by id
-     *
-     * @param id of MPA rating
-     * @return MPA rating
-     */
-    public MpaRating getMpaRatingById(int id) {
-        return mpaDbStorage.getMpaRatingById(id);
-    }
-
-
-    /**
-     * Get list of all genres
-     *
-     * @return list of all genres
-     */
-    public List<Genre> getAllGenres() {
-        return genreDbStorage.getAllGenres();
-    }
-
-    /**
-     * Get genre by id
-     *
-     * @param id of genre
-     * @return genre
-     */
-    public Genre getGenreById(int id) {
-        return genreDbStorage.getGenreById(id);
-    }
-
 
     /**
      * Comparator for sorting popular films
