@@ -35,7 +35,7 @@ class FilmControllerTest {
     @Autowired
     private FilmController filmController;
 
-    private final Film film = new Film();
+    private final Film film = Film.builder().build();
 
     @BeforeEach
     void setFilm() {

@@ -1,27 +1,37 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.LikesDbStorage;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Class service for operations with films storage
+ */
 @Service
 public class FilmService {
 
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
 
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
+    private final LikesDbStorage likesDbStorage;
+
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikesDbStorage likesDbStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.likesDbStorage = likesDbStorage;
     }
 
 
@@ -76,13 +86,9 @@ public class FilmService {
         Film film = getFilmById(filmId);
         userStorage.getUserById(userId);    // Check valid user ID
 
-
-        Set<Integer> likes = film.getLikes();
-        if (likes == null) {
-            likes = new HashSet<>();
+        if (likesDbStorage.setLike(filmId, userId)) {
+            film.setRate(film.getRate() + 1);
         }
-        likes.add(userId);
-        film.setLikes(likes);
 
         return updateFilm(film);
     }
@@ -99,13 +105,13 @@ public class FilmService {
         Film film = getFilmById(filmId);
         userStorage.getUserById(userId);    // Check valid user ID
 
-        Set<Integer> likes = film.getLikes();
-        if (likes == null) {
-            likes = new HashSet<>();
-        }
-        likes.remove(userId);
-        film.setLikes(likes);
+        Set<Integer> likes = new HashSet<>(likesDbStorage.getLikes(filmId));
 
+        if (!likes.isEmpty()) {
+            likesDbStorage.deleteLike(filmId, userId);
+        }
+
+        film.setRate(film.getRate() - 1);
         return updateFilm(film);
     }
 
@@ -130,13 +136,13 @@ public class FilmService {
      * @return result of comparing
      */
     private int compare(Film film0, Film film1) {
-        if (film0.getLikes() == null) {
+        if (film0.getRate() == 0) {
             return 1;
         }
-        if (film1.getLikes() == null) {
+        if (film1.getRate() == 0) {
             return -1;
         }
-        return film1.getLikes().size() - film0.getLikes().size();
+        return film1.getRate() - film0.getRate();
     }
 
 }

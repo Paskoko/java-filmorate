@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.database.FriendsDbStorage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,11 +17,15 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
+    private final FriendsDbStorage friendsDbStorage;
+
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FriendsDbStorage friendsDbStorage) {
         this.userStorage = userStorage;
+        this.friendsDbStorage = friendsDbStorage;
     }
 
     /**
@@ -70,29 +74,12 @@ public class UserService {
      *
      * @param userId   of user
      * @param friendId of added friend
-     * @return updated user
      */
-    public User addNewFriend(int userId, int friendId) {
-        User user = getUserById(userId);
-        User secondUser = getUserById(friendId);    // Second user to update friends list
+    public void addNewFriend(int userId, int friendId) {
+        getUserById(userId);    // Check user id
+        getUserById(friendId);  // Check friend id
 
-        Set<Integer> friends = user.getFriends();
-        if (friends == null) {
-            friends = new HashSet<>();
-        }
-        friends.add(friendId);
-        user.setFriends(friends);
-
-        Set<Integer> secondUserFriends = secondUser.getFriends();
-        if (secondUserFriends == null) {
-            secondUserFriends = new HashSet<>();
-        }
-        secondUserFriends.add(userId);
-        secondUser.setFriends(secondUserFriends);
-        updateUser(secondUser);
-
-
-        return updateUser(user);
+        friendsDbStorage.addFriend(userId, friendId, "new");
     }
 
     /**
@@ -102,30 +89,12 @@ public class UserService {
      *
      * @param userId   of user
      * @param friendId of deleted friend
-     * @return updated user
      */
-    public User deleteFriend(int userId, int friendId) {
-        User user = getUserById(userId);
-        User secondUser = getUserById(friendId);    // Second user to update friends list
+    public void deleteFriend(int userId, int friendId) {
+        getUserById(userId);    // Check user id
+        getUserById(friendId);  // Check friend id
 
-        Set<Integer> friends = user.getFriends();
-        if (friends == null) {
-            friends = new HashSet<>();
-        }
-        friends.remove(friendId);
-        user.setFriends(friends);
-
-
-        Set<Integer> secondUserFriends = secondUser.getFriends();
-        if (secondUserFriends == null) {
-            secondUserFriends = new HashSet<>();
-        }
-        secondUserFriends.remove(userId);
-        secondUser.setFriends(secondUserFriends);
-        updateUser(secondUser);
-
-
-        return updateUser(user);
+        friendsDbStorage.deleteFriend(userId, friendId);
     }
 
     /**
@@ -135,14 +104,11 @@ public class UserService {
      * @return friends list
      */
     public List<User> getUsersFriends(int userId) {
+        List<Integer> friendList = friendsDbStorage.getFriends(userId);
 
-        Set<Integer> friends = getUserById(userId).getFriends();
-        if (friends == null) {
-            return new ArrayList<>();
-        }
         return getUsers().stream()
                 .filter(user ->
-                        friends.contains(user.getId())
+                        friendList.contains(user.getId())
                 ).collect(Collectors.toList());
     }
 
